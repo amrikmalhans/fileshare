@@ -16,19 +16,35 @@ const blobService = azure.createBlobService("DefaultEndpointsProtocol=https;Acco
   
 app.post('/upload', (req, res) => {
   const dd = req.files.file;
-
-  dd.map(item => {
+  const clientData = []
+  for (let  item of dd) {
     let data = item.data;
     let fileName = item.name;
-    blobService.createBlockBlobFromText('mycontainer', fileName, data, function(err) {
-    if(!err) {
-       console.log('uploaded!');
-    } 
-    const URL =  blobService.getUrl('mycontainer', fileName);
-     let respData = {path: URL, name: fileName}
-     res.write(respData)
-  })
-  })
+    blobService.createBlockBlobFromText('mycontainer', fileName, data, function (err) {
+     
+      if (!err) {
+        console.log('uploaded!');
+         const URL =  blobService.getUrl('mycontainer', fileName);
+         let respData = {path: URL, name: fileName}
+         console.log(respData);
+         clientData.push(respData);
+      }
+    })
+  }
+
+  res.send(clientData)
+  // dd.map(item => {
+  //   let data = item.data;
+  //   let fileName = item.name;
+  //   blobService.createBlockBlobFromText('mycontainer', fileName, data, function(err) {
+  //   if(!err) {
+  //      console.log('uploaded!');
+  //   } 
+  //   // const URL =  blobService.getUrl('mycontainer', fileName);
+  //   //  let respData = {path: URL, name: fileName}
+  //   //  res.write(respData)
+  // })
+  // })
 //   for (let x = 0; x < req.files.file.length; x++) {
 //   let data = req.files.file[x].data;
 //   let fileName = req.files.file[x].name;
